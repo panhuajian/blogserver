@@ -20,7 +20,7 @@ module.exports = {
         break
       // 注册
       case 1:
-        connectSql.connPool (`insert user (username, password) values('${req.body.username}', '${req.body.password}')`, (err, rows) => {
+        connectSql.connPool (`insert user (username, password) values('${req.body.username}', '${req.body.password}')`, (err) => {
           if (err) {
             res.send({status: 0, msg: '用户注册失败！'})
           } else {
@@ -46,4 +46,4 @@ module.exports = {
         res.send({status: 0, msg: '请求信息错误！', data: req.body.type})
     }
   }
-};
+}
