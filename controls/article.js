@@ -1,4 +1,6 @@
 const connectSql = require('../public/connect');
+const formidable = require('formidable');
+const path = require('path');
 
 module.exports = {
   // 
@@ -40,5 +42,28 @@ module.exports = {
       default:
         res.send({status: 0, msg: '请求信息错误！'})
     }
+  },
+  upload (req, res) {
+    var form = new formidable.IncomingForm();
+    form.encoding = 'utf-8';
+    form.uploadDir = path.join(__dirname + '/../img');
+    form.keepExtensions = true;//保留后缀
+    form.maxFieldsSize = 2 * 1024 * 1024;
+    form.parse(req, function (err, fields, files){
+      var imgname = files.avatar.path.split('\\').pop();
+      console.log('11111', imgname);
+      // var nameArray = filename.split('.');
+      // var type = nameArray[nameArray.length - 1];
+      // var name = '';
+      // for (var i = 0; i < nameArray.length - 1; i++) {
+      //     name = name + nameArray[i];
+      // }
+      // var date = new Date();
+      // var time = '_' + date.getFullYear() + "_" + date.getMonth() + "_" + date.getDay() + "_" + date.getHours() + "_" + date.getMinutes();
+      // var avatarName = name + time + '.' + type;
+      // var newPath = form.uploadDir + "/" + avatarName;
+      // fs.renameSync(files.the_file.path, newPath);  //重命名
+      res.send({data: '/blogserver/img/' + imgname})
+    })
   }
 }

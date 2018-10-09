@@ -13,6 +13,7 @@ let router = express.Router();
 // 注册
 router.post('/api/register', user.register);
 router.post('/api/article', article.article);
+router.post('/api/upload', article.upload);
 
 // router.get(api.userLogout, user.logout);
 // router.get(api.userAutoLogin, user.autoLogin); // 自动登录
