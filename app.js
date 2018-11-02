@@ -4,7 +4,9 @@ let path = require('path');
 let session = require('express-session');
 let router = require('./routes/router');
 
+// let port = process.env.PORT || 3000;
 let port = process.env.PORT || 9999;
+
 let app = express();
 
 app.all('*', function(req, res, next) {
@@ -30,6 +32,11 @@ app.use(session({
 
 app.use(router);
 
+// 本地
 app.listen(port, () => {
     console.log(`devServer start on port:${ port}`);
 });
+// 线上
+// app.listen(port, '0.0.0.0', () => {
+//     console.log(`devServer start on port:${ port}`);
+// });
