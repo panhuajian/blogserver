@@ -8,24 +8,26 @@ module.exports = {
     switch (req.body.type) {
       // 添加文章
       case 0:
-        const title = req.body.title.replace(/'/g, '"')
-        const content = req.body.content.replace(/'/g, '"')
-        const author = req.body.author.replace(/'/g, '"')
-        connectSql.connPool (`insert article (title, content, author) values('${title}', '${content}', '${author}')`, (err, rows) => {
+        var title = req.body.title.replace(/'/g, '"')
+        var content = req.body.content.replace(/'/g, '"')
+        var author = req.body.author.replace(/'/g, '"')
+        var releaseTime = req.body.releaseTime.replace(/'/g, '"')
+        connectSql.connPool (`insert article (title, content, author, releaseTime) values('${title}', '${content}', '${author}', '${releaseTime}')`, (err, rows) => {
           if (err) {
-            res.send({status: 0, msg: '接口错误！', data: req.body.content})
+            res.send({status: 0, msg: '接口错误！', type: 0, data: req.body.content})
           } else {
-            res.send({status: 1, msg: '发布成功！'})
+            res.send({status: 1, msg: '发布成功！', type: 0, data: rows})
           }
         })
-        
+        break
       // 查询所有文章
       case 1:
+        console.log('-------------------------------',req)
         connectSql.connPool (`select * from article order by id desc limit 10`, (err, rows) => {
           if (err) {
-            res.send({status: 0, msg: '接口错误！'})
+            res.send({status: 0, msg: '接口错误！', type: 1})
           } else {
-            res.send({status: 1, msg: '请求成功', data: rows})
+            res.send({status: 1, msg: '请求成功！', type: 1, data: rows})
           }
         })
         break
@@ -33,9 +35,35 @@ module.exports = {
       case 2:
         connectSql.connPool (`select * from article where id = ${req.body.id}`, (err, rows) => {
           if (err) {
-            res.send({status: 0, msg: '接口错误！'})
+            res.send({status: 0, msg: '接口错误！', type: 2})
           } else {
-            res.send({status: 1, msg: '请求成功', data: rows[0]})
+            res.send({status: 1, msg: '请求成功！', type: 2, data: rows[0]})
+          }
+        })
+        break
+      // 查询当前用户的文章
+      case 3:
+        connectSql.connPool (`select * from article where author = '${req.body.author}' order by id desc`, (err, rows) => {
+          if (err) {
+            res.send({status: 0, msg: '接口错误！', type: 3})
+          } else {
+            res.send({status: 1, msg: '请求成功！', type: 3, data: rows, author: req.body})
+          }
+        })
+        break
+      // 更新文章
+      case 4:
+        var title = req.body.title.replace(/'/g, '"')
+        var content = req.body.content.replace(/'/g, '"')
+        var author = req.body.author.replace(/'/g, '"')
+        var releaseTime = req.body.releaseTime.replace(/'/g, '"')
+        var id = req.body.id
+        // connectSql.connPool (`update article (title, content, author, releaseTime) values('${title}', '${content}', '${author}', '${releaseTime}')`, (err, rows) => {
+        connectSql.connPool (`update article set title = '${title}', content = '${content}', author = '${author}', releaseTime = '${releaseTime}' where id = ${id} `, (err, rows) => {
+          if (err) {
+            res.send({status: 0, msg: '接口错误！', type: 0, data: req.body.content})
+          } else {
+            res.send({status: 1, msg: '发布成功！', type: 0, data: rows})
           }
         })
         break
@@ -50,7 +78,7 @@ module.exports = {
     form.keepExtensions = true;//保留后缀
     form.maxFieldsSize = 2 * 1024 * 1024;
     form.parse(req, function (err, fields, files){
-      var imgname = files.avatar.path.split('\\').pop();
+      var imgname = files.avatar.path.split('/').pop();
       console.log('11111', imgname);
       // var nameArray = filename.split('.');
       // var type = nameArray[nameArray.length - 1];

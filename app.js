@@ -4,7 +4,9 @@ let path = require('path');
 let session = require('express-session');
 let router = require('./routes/router');
 
+// 线上
 // let port = process.env.PORT || 3000;
+// 本地
 let port = process.env.PORT || 9999;
 
 let app = express();
